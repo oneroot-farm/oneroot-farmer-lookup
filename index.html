@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>OR - Farmer Lookup</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+    <link rel="manifest" href="assets/site.webmanifest">
+    <link rel="mask-icon" href="assets/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        padding-top: 20px;
+      }
+      .container {
+        max-width: 600px;
+      }
+      .result {
+        margin-top: 20px;
+        word-wrap: break-word;
+      }
+      .footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: #f5f5f5;
+        line-height: 60px;
+        font-size: 18px;
+      }
+      #oneroot-link {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      #oneroot-link:hover,
+      #oneroot-link:focus {
+        color: #0056b3;
+        text-decoration: underline;
+      }
+      .loader {
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 2s linear infinite;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+      }
+      @keyframes spin {
+        0% {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        100% {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="mb-4">Farmer Data Lookup</h1>
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          id="mobileInput"
+          class="form-control"
+          placeholder="Enter Mobile Number"
+          aria-label="Mobile Number"
+          aria-describedby="button-addon"
+          oninput="validate(this)"
+        />
+        <div class="input-group-append">
+          <button
+            class="btn btn-primary"
+            type="button"
+            id="button-addon"
+            onclick="fetchData()"
+          >
+            Search
+          </button>
+        </div>
+      </div>
+      <div id="result" class="result"></div>
+    </div>
+
+    <footer class="footer mt-auto py-3 text-center">
+      <div class="container">
+        <span class="text-muted"
+          >Made With ❤️ By
+          <a
+            target="_blank"
+            href="https://www.linkedin.com/in/rohitchavan110116114/"
+            id="oneroot-link"
+            >Rohit Chavan</a
+          ></span
+        >
+        <span class="text-muted"
+          >&copy; <span id="copyright-year"></span>
+          <a target="_blank" href="https://oneroot.farm" id="oneroot-link"
+            >OneRoot</a
+          >
+          All rights reserved.</span
+        >
+      </div>
+    </footer>
+
+    <div id="loader" class="loader" style="display: none"></div>
+
+    <script>
+      const validate = (input) => {
+        input.value = input.value.replace(/\D/g, "");
+
+        if (input.value.length > 10) {
+          input.value = input.value.slice(0, 10);
+        }
+      };
+
+      document.getElementById("copyright-year").textContent =
+        new Date().getFullYear();
+
+      const fetchData = async () => {
+        const mobile = document.getElementById("mobileInput").value;
+
+        const loader = document.getElementById("loader");
+
+        if (!mobile) {
+          alert("Please enter a mobile number.");
+          return;
+        }
+
+        if (!mobile || mobile.length !== 10) {
+          alert("Please enter a 10-digit mobile number.");
+          return;
+        }
+
+        const apiKey = "AIzaSyArolXRX10Rv2t5SVVLdGBeVKLv8ey4c04";
+        const sheetId = "1F2MVVsI7vZxdfZcK1uFbm41YrmKzhZ3OV_suFROQV7U";
+        const range = "Sheet1!A:E";
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
+
+        loader.style.display = "block";
+
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+          const rows = data.values;
+
+          if (!rows || rows.length === 0) {
+            document
+              .getElementById("result")
+              .classList.add("alert", "alert-warning");
+            document.getElementById("result").innerHTML = "No data found.";
+            return;
+          }
+
+          // Find the row that matches the mobile number
+          const matchingRow = rows.find((row) => row[1] === mobile);
+
+          if (matchingRow) {
+            // Construct the display string using the matching row's data
+            const displayText = `<strong>Name:</strong> ${matchingRow[0]}, <strong>Mobile:</strong> ${matchingRow[1]}, <strong>Address(Taluk):</strong> ${matchingRow[4]}`;
+            document
+              .getElementById("result")
+              .classList.add("alert", "alert-success");
+            document.getElementById("result").innerHTML = displayText;
+          } else {
+            document
+              .getElementById("result")
+              .classList.add("alert", "alert-danger");
+            document.getElementById("result").innerHTML =
+              "No data found for the given mobile number.";
+          }
+
+          loader.style.display = "none";
+        } catch (error) {
+          console.error("Error:", error);
+
+          loader.style.display = "none";
+
+          document
+            .getElementById("result")
+            .classList.add("alert", "alert-danger");
+          document.getElementById("result").innerHTML = "Failed to fetch data.";
+        }
+      };
+    </script>
+
+    <!-- Optional JavaScript and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>
