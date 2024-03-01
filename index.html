@@ -1,18 +1,35 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
     <title>OR - Farmer Lookup</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
-    <link rel="manifest" href="assets/site.webmanifest">
-    <link rel="mask-icon" href="assets/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
-    
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="assets/favicon-16x16.png"
+    />
+    <link rel="manifest" href="assets/site.webmanifest" />
+    <link rel="mask-icon" href="assets/safari-pinned-tab.svg" color="#5bbad5" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
+
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -66,6 +83,34 @@
         }
         100% {
           transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+      .flex-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .flex-container p {
+        flex: 1;
+        margin: 0;
+        text-align: left;
+      }
+
+      .btn-primary {
+        white-space: nowrap;
+      }
+
+      @media (max-width: 576px) {
+        .flex-container {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .flex-container p,
+        .flex-container .btn-primary {
+          margin-bottom: 8px;
         }
       }
     </style>
@@ -178,11 +223,16 @@
               .classList.add("alert", "alert-success");
             document.getElementById("result").innerHTML = displayText;
           } else {
+            const formUrl = `https://docs.google.com/forms/d/e/1FAIpQLScNKbJbHpxtthb4wKJJ7OUWVuifYM3AhBBfEPDPNGUeWyfHcA/viewform?usp=pp_url&entry.138952856=${mobile}`;
+
             document
               .getElementById("result")
               .classList.add("alert", "alert-danger");
-            document.getElementById("result").innerHTML =
-              "No data found for the given mobile number.";
+            document.getElementById("result").innerHTML = `
+            <div class="flex-container">
+              <p>No data found for the given mobile number.</p>
+              <a href="${formUrl}" target="_blank" class="btn btn-primary">Onboard Now</a>
+            </div>`;
           }
 
           loader.style.display = "none";
