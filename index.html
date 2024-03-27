@@ -51,7 +51,7 @@
         bottom: 0;
         width: 100%;
         background-color: #f5f5f5;
-        line-height: 60px;
+        line-height: 40px;
         font-size: 18px;
       }
       #oneroot-link {
@@ -194,7 +194,7 @@
 
         const apiKey = "AIzaSyArolXRX10Rv2t5SVVLdGBeVKLv8ey4c04";
         const sheetId = "1F2MVVsI7vZxdfZcK1uFbm41YrmKzhZ3OV_suFROQV7U";
-        const range = "Sheet1!A:E";
+        const range = "Sheet1!A:K";
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
 
         loader.style.display = "block";
@@ -217,7 +217,21 @@
 
           if (matchingRow) {
             // Construct the display string using the matching row's data
-            const displayText = `<strong>Name:</strong> ${matchingRow[0]}, <strong>Mobile:</strong> ${matchingRow[1]}, <strong>Address(Taluk):</strong> ${matchingRow[4]}`;
+            const displayText = `<strong>Name:</strong> ${
+              matchingRow[0]
+            }, <strong>Mobile:</strong> ${
+              matchingRow[1]
+            }, <strong>Address(Taluk):</strong> ${
+              matchingRow[4]
+            }, <strong>Crop:</strong> ${
+              matchingRow[6] || "-"
+            }, <strong>Variety:</strong> ${
+              matchingRow[8] || "-"
+            }, <strong>Acerage:</strong> ${
+              matchingRow[9] || "-"
+            }, <strong>Number Of Trees/Tons:</strong> ${
+              matchingRow[10] || "-"
+            }`;
             document
               .getElementById("result")
               .classList.add("alert", "alert-success");
